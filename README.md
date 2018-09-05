@@ -2,9 +2,12 @@
 
 ## Summary
 * It can view Redmine logs from Redmine Admin UI.
-* This plugin folked from [here](https://github.com/haru/redmine_logs).
+* This plugin folked from [here](https://github.com/haru/redmine_logs). Thanks!
 
 ## Function
+
+This plugin does not provide deleting logs function from Redmine admin UI due to security log manamgement. If you want to delete logs, remove files via ssh.
+
 |Function|Available|
 |----|----|
 |View|YES|
