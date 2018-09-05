@@ -5,11 +5,11 @@
 * This plugin folked from [here](https://github.com/haru/redmine_logs).
 
 ## Function
-|Function||
+|Function|Available|
 |----|----|
-|View|Available|
-|Download|Available|
-|Delete|Not Available|
+|View|YES|
+|Download|YES|
+|Delete|NO|
 
 ## Install
 
