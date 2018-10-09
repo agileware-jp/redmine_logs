@@ -2,7 +2,7 @@
 
 ## Summary
 * It can view Redmine logs from Redmine Admin UI.
-* This plugin folked from [here](https://github.com/haru/redmine_logs). Thanks!
+* This plugin is forked from <https://github.com/haru/redmine_logs>. Thanks!
 
 [中文](README_zh.md)
 
