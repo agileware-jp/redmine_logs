@@ -20,7 +20,7 @@ bundle install
 bundle exec rake redmine:plugins:migrate RAILS_ENV=production
 bundle exec rake redmine:plugins:assets RAILS_ENV=production
 ```
-and resetart redmine services.
+and restart Redmine.
 
 ## Maintainer
 * [Agileware Inc](https://agileware.jp)
