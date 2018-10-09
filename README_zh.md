@@ -18,10 +18,10 @@
 ## 安装
 
 ```
-cd <Redmine Install Dir>/plugins
+cd <path_to_redmine>/plugins
 git clone https://github.com/agileware-jp/redmine_logs_view.git
 
-cd <Redmine Home>
+cd ..
 bundle install
 bundle exec rake redmine:plugins:migrate RAILS_ENV=production
 bundle exec rake redmine:plugins:assets RAILS_ENV=production
