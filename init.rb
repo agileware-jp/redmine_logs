@@ -19,10 +19,9 @@ require 'admin_menu_hooks'
 
 Redmine::Plugin.register :redmine_logs_view do
   name 'Redmine Logs View plugin'
-  author 'Agileware Inc.'
+  author 'Originally created by Haruyuki Iida (https://github.com/haru/) / Forked by Agileware Inc. (https://agileware.jp/)'
   description 'This is a plugin for Redmine'
   version '0.1.1'
-  author_url 'http://agileware.jp'
   requires_redmine :version_or_higher => '3.0.0'
   menu :admin_menu, 'icon redmine-logs', { :controller => 'logs', :action => 'index'}, :caption => :logs
 end
