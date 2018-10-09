@@ -20,7 +20,7 @@ This plugin does not provide deleting logs function from Redmine admin UI due to
 
 ```
 cd <Redmine Install Dir>/plugins
-git clone https://github.com/agileware-jp/redmine_logs_view.git
+git clone https://github.com/agileware-jp/redmine_logs.git
 
 # Move to Redmine Home
 cd <Redmine Home>
