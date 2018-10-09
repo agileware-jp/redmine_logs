@@ -16,8 +16,7 @@ git clone https://github.com/agileware-jp/redmine_logs.git
 
 cd ..
 bundle install
-bundle exec rake redmine:plugins:migrate RAILS_ENV=production
-bundle exec rake redmine:plugins:assets RAILS_ENV=production
+bundle exec rake redmine:plugins RAILS_ENV=production
 ```
 and restart Redmine.
 
