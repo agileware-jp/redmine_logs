@@ -22,5 +22,10 @@ bundle exec rake redmine:plugins:assets RAILS_ENV=production
 ```
 and restart Redmine.
 
+## Original Author
+
+[Haruyuki Iida](https://github.com/haru/)
+
 ## Maintainer
+
 * [Agileware Inc](https://agileware.jp)
