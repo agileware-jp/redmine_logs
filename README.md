@@ -18,6 +18,7 @@ cd ..
 bundle install
 bundle exec rake redmine:plugins RAILS_ENV=production
 ```
+
 and restart Redmine.
 
 ## Original Author
