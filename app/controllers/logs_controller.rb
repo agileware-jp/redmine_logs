@@ -41,19 +41,6 @@ class LogsController < ApplicationController
     send_file(params[:path])
   end
 
-  def delete
-    begin
-      File.delete(params[:path])
-      redirect_to :action => "index"
-    rescue => e
-      @error = e
-      @logs = log_list(LOGDIR)
-      @logs.sort{|x, y|x.path <=> y.path}
-      render :action => "index"
-    end
-
-  end
-
   private
   def log_list(path)
     logs = []
