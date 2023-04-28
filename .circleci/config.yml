@@ -1,0 +1,157 @@
+version: 2.1
+
+orbs:
+  redmine-plugin: agileware-jp/redmine-plugin@3.1.0
+  rubocop:
+    executors:
+      rubocop-executor:
+        parameters:
+          ruby_version:
+            description: version of Ruby
+            type: string
+            default: $RUBY_MAX_VERSION
+        docker:
+          - image: cimg/ruby:<<parameters.ruby_version>>
+    commands:
+      install-rubocop:
+        parameters:
+          rubocop_version:
+            description: version of Rubocop
+            type: string
+            default: ''
+        steps:
+          - run:
+              name: install rubocop << parameters.rubocop_version >>
+              command: |
+                set -e
+                if [ <<parameters.rubocop_version>> ]; then
+                  gem install rubocop -v '<< parameters.rubocop_version >>'
+                else
+                  gem install rubocop
+                fi
+      install-cop-from-github:
+        parameters:
+          url:
+            description: URL of Git repository of custom cop
+            type: string
+        steps:
+          - run: git clone << parameters.url >> /tmp/cop-repo && cd /tmp/cop-repo && rake install && cd / && rm -rf /tmp/cop-repo
+      install-cop-from-gem:
+        parameters:
+          gem-name:
+            description: name of gem
+            type: string
+        steps:
+          - run: gem install << parameters.gem-name >>
+      run-cops:
+        parameters:
+          rubocop_option:
+            description: CLI option for rubocop
+            type: string
+            default: '--format simple'
+        steps:
+          - run: rubocop << parameters.rubocop_option >>
+
+jobs:
+  rubocop:
+    parameters:
+      rubocop_config_path:
+        description: path to rubocop config yaml
+        type: string
+      rubocop_files:
+        description: files to check by rubocop
+        type: string
+    executor: rubocop/rubocop-executor
+    steps:
+      - checkout
+      - rubocop/install-rubocop:
+          rubocop_version: '~> 0.93.1'
+
+      - rubocop/install-cop-from-github:
+          url: https://github.com/agileware-jp/rubocop-lychee.git
+      - rubocop/install-cop-from-github:
+          url: https://github.com/agileware-jp/rubocop-no_keyword_args.git
+      - rubocop/install-cop-from-gem:
+          gem-name: rubocop-rails
+      - rubocop/install-cop-from-gem:
+          gem-name: rubocop-rspec
+      - rubocop/install-cop-from-gem:
+          gem-name: rubocop-performance
+      - rubocop/run-cops:
+          rubocop_option: --fail-level E --display-only-fail-level-offenses -f s -c << parameters.rubocop_config_path >> << parameters.rubocop_files >>
+  brakeman:
+    docker:
+      - image: presidentbeef/brakeman
+    steps:
+      - checkout
+      - run: /usr/src/app/bin/brakeman --color
+  rspec:
+    parameters:
+      redmine_version:
+        type: string
+      ruby_version:
+        type: string
+      db:
+        type: enum
+        enum: ['mysql', 'pg']
+      db_version:
+        type: string
+    executor:
+      name: redmine-plugin/ruby-<< parameters.db >>
+      ruby_version: << parameters.ruby_version >>
+      db_version: << parameters.db_version >>
+    steps:
+      - checkout
+      - redmine-plugin/download-redmine:
+          version: << parameters.redmine_version >>
+      - redmine-plugin/install-self
+      - redmine-plugin/generate-database_yml
+      - redmine-plugin/bundle-install
+      - redmine-plugin/migrate-without-plugins
+      - redmine-plugin/rspec
+      - store_artifacts:
+          path: /tmp/coverage
+          destination: coverage
+      - store_artifacts:
+          path: redmine/tmp/capybara
+          destination: screenshots
+
+default_context: &default_context
+  context:
+    - lychee-ci-environment
+
+ignore_trial: &ignore_trial
+  filters:
+    branches:
+      ignore:
+        - trial
+
+workflows:
+  version: 2
+  test:
+    jobs:
+      - rubocop:
+          <<: *default_context
+          <<: *ignore_trial
+          name: rubocop
+          rubocop_config_path: ~/project/.rubocop.yml
+          rubocop_files:  ~/project
+      - brakeman:
+          <<: *default_context
+          <<: *ignore_trial
+      - rspec:
+          <<: *default_context
+          <<: *ignore_trial
+          name: RSpec on supported maximum versions with PostgreSQL
+          redmine_version: $REDMINE_MAX_VERSION
+          ruby_version: $RUBY_MAX_VERSION
+          db: pg
+          db_version: $POSTGRES_VERSION
+      - rspec:
+          <<: *default_context
+          <<: *ignore_trial
+          name: RSpec on supported minimum versions with MySQL
+          redmine_version: $REDMINE_MIN_VERSION
+          ruby_version: $RUBY_MIN_VERSION
+          db: mysql
+          db_version: $MYSQL_VERSION
